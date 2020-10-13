@@ -135,22 +135,15 @@ object MyOption {
     * @return [[MyOption]] MySome(6)
     */
   def translateToForComprehensions1: MyOption[Int] = {
-//      for (one <- Seq(MyOption(1))) {
-//        for (two <- Seq(MyOption(2))) {
-//          for (three <- Seq(MyOption(3))) {
-//            return MyOption(one.get + two.get + three.get)
-//          }
-//        }
-//      }
-
-    // 例文
-    MyOption(1).flatMap { one =>
-      MyOption(2).flatMap { two =>
-        MyOption(3).map { three =>
-          one + two + three
-        }
+    var result = MyOption(0)
+    for {
+       one <- Seq(MyOption(1))
+       two <- Seq(MyOption(2))
+       three <- Seq(MyOption(3))
+       } {
+        result = MyOption(one.get + two.get + three.get)
       }
-    }
+    result
   }
 
   /**
@@ -159,13 +152,15 @@ object MyOption {
    */
   def translateToForComprehensions2: MyOption[Int] = {
 
-    // 例文
-    MyOption(1).flatMap { one =>
-      MyOption(-2).withFilter(_ > 0).flatMap { two =>
-        MyOption(3).map { three =>
-          one + two + three
-        }
-      }
+    var result = MyOption(0)
+    for {
+      one <- Seq(MyOption(1))
+      two <- Seq(MyOption(-2))
+      three <- Seq(MyOption(3))
+    } {
+      if (two.filter(_ > 0).isEmpty) return MyNone
+      result = MyOption(one.get + two.get + three.get)
     }
+    result
   }
 }
